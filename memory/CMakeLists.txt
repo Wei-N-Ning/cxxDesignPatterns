@@ -22,3 +22,15 @@ set_target_properties(test_page
 add_test(
     NAME "memory::test_page"
     COMMAND test_page)
+
+add_tinytest_executable(test_smartPointer
+    test_smartPointer.cpp)
+target_sources(test_smartPointer
+    PRIVATE
+    smartPointer.hpp)
+set_target_properties(test_smartPointer
+    PROPERTIES
+    CXX_STANDARD 14)
+add_test(
+    NAME "memory::test_smartPointer"
+    COMMAND test_smartPointer)
