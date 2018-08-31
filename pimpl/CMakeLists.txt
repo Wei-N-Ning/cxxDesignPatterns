@@ -1,9 +1,11 @@
 
 add_library(foo STATIC
     fooService.cpp
-    fooService.hpp)
+    fooService.hpp
+    )
 set_target_properties(foo
     PROPERTIES
+    POSITION_INDEPENDENT_CODE 1
     CXX_STANDARD 14)
 target_include_directories(foo
     PUBLIC
