@@ -2,7 +2,7 @@
 // Created by Wei on 13/04/2016.
 //
 
-#include "fooService.hpp"
+#include "classDesign/pimpl/fooService.hpp"
 
 
 class FooService::FooServiceImpl {
