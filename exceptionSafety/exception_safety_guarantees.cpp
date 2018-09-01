@@ -33,7 +33,81 @@
  *
  */
 
+#include <memory>
+#include <cassert>
+
+// refresh my memory on ////defining special member functions////
+// Modern Effective C++ Item 17 P111
+//
+// ////////// (C++98) rule of three ////////////
+// ////////// (C++11) rule of five ////////////
+//
+// if you declare any of a copy ctor, copy =, or dtor, you should
+// declare all three; it stems from the class performing some kind
+// of resource management,
+
+// C++11 does not generate move operations for a class with a user -
+// defined dtor
+
+// emulate the public module
+///////////// the header
+
+class Gun {
+public:
+    Gun();
+    Gun(int numBullets);
+    ~Gun();
+    Gun(Gun &&other) noexcept;
+    Gun &operator=(Gun &&other) noexcept;
+    Gun(const Gun &other) = delete;
+    Gun &operator=(const Gun &other) = delete;
+
+    int fire();
+
+private:
+    class GunImpl;
+    std::unique_ptr<GunImpl> m_impl = nullptr;
+};
+
+///////////// the source
+Gun::Gun() {
+    m_impl = std::make_unique<GunImpl>();
+}
+Gun::Gun(int numBullets) {
+    m_impl = std::make_unique<GunImpl>(numBullets);
+}
+Gun::Gun(Gun &&other) noexcept = default;
+Gun& Gun::operator=(Gun &&other) noexcept = default;
+Gun::~Gun() = default;
+
+// emulate a separate implementation module
+class Gun::GunImpl {
+public:
+    GunImpl() = default;
+    GunImpl(int numBullets)
+        : m_numBullets(numBullets) {}
+    int fire() {
+        return m_numBullets;
+    }
+
+private:
+    int m_numBullets = 1;
+};
+
+int Gun::fire() {
+    return m_impl->fire();
+}
+
+void upgrade(Gun& gun) {
+    Gun tmp(10);
+    gun = std::move(tmp);
+}
 
 int main() {
+    Gun g;
+    assert(1 == g.fire());
+
+    upgrade(g);
+    assert(10 == g.fire());
     return 0;
 }
